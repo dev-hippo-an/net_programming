@@ -1,4 +1,4 @@
-package test
+package tcp_session
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// 데드라인 지정 없이 필요 시 cancel 함수를 사용하여 연결 시도 취소
 func TestDialContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -40,5 +41,7 @@ func TestDialContextCancel(t *testing.T) {
 
 	if ctx.Err() != context.Canceled {
 		t.Errorf("expected canceled context; actual: %q", ctx.Err())
+	} else {
+		t.Log("context cancel")
 	}
 }

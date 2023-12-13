@@ -1,4 +1,4 @@
-package test
+package tcp_session
 
 import (
 	"context"
@@ -8,15 +8,16 @@ import (
 	"time"
 )
 
+// 명시적으로 타임 아웃을 정의하기 with context and cancel
 func TestDialContext(t *testing.T) {
+	// deadline 설정
 	dl := time.Now().Add(5 * time.Second)
 	ctx, cancel := context.WithDeadline(context.Background(), dl)
 	defer cancel()
 
-
 	var d net.Dialer
 	d.Control = func(_, _ string, _ syscall.RawConn) error {
-		time.Sleep(5 * time.Second + time.Millisecond)
+		time.Sleep(5*time.Second + time.Millisecond)
 		return nil
 	}
 
@@ -39,4 +40,5 @@ func TestDialContext(t *testing.T) {
 	if ctx.Err() != context.DeadlineExceeded {
 		t.Errorf("expected deadline exceeded; actual: %v", ctx.Err())
 	}
+	// 결국 context.DeadlineExceeded 가 발생하고 defer 키워드로 cancel() 함수가 호출되어 graceful terminate 
 }

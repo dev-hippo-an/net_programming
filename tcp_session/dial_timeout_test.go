@@ -1,4 +1,4 @@
-package test
+package tcp_session
 
 import (
 	"net"
@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
+
+// 명시적으로 타임 아웃 기간을 정의하고 함수를 이용해 타임아웃 발생
 func DialTimeout(network, address string, timeout time.Duration) (net.Conn, error) {
+
+	// DNSError 반환을 위한 별도 Dialer 구현체 사용
 	d := net.Dialer{
 		Control: func(_, addr string, _ syscall.RawConn) error {
 			return &net.DNSError{
@@ -25,7 +29,7 @@ func DialTimeout(network, address string, timeout time.Duration) (net.Conn, erro
 
 func TestDialTimeout(t *testing.T) {
 	c, err := DialTimeout("tcp", "10.0.0.1:http", 5*time.Second)
-	if err != nil {
+	if err == nil {
 		c.Close()
 		t.Fatal("connection did not time out")
 	}
