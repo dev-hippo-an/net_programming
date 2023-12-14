@@ -28,9 +28,11 @@ func TestDialContextCancel(t *testing.T) {
 
 		conn, err := d.DialContext(ctx, "tcp", "10.0.0.1:80")
 		if err != nil {
-			t.Log(err)
+			t.Logf("Error occured caused by canceled context; %s", err)
 			return
 		}
+
+		t.Log("Unreachable code here..!")
 
 		conn.Close()
 		t.Error("connection did not time out")
@@ -38,6 +40,7 @@ func TestDialContextCancel(t *testing.T) {
 
 	cancel()
 	<-sync
+	defer close(sync)
 
 	if ctx.Err() != context.Canceled {
 		t.Errorf("expected canceled context; actual: %q", ctx.Err())
